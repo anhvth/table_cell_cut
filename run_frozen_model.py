@@ -12,6 +12,7 @@ parser.add_argument('--mode', default='separate', choices=['separate', 'join'])
 parser.add_argument('--input_dir')
 parser.add_argument('--output_dir')
 parser.add_argument('--checkpoint')
+parser.add_argument('--restore_size', type=bool, default=True)
 parser.add_argument('--ext', default=None)
 parser.add_argument('--down_scale', type=float, default=572/512)
 args = parser.parse_args()
@@ -103,8 +104,10 @@ if __name__ == '__main__':
             print('image:', path, '\t shape: ', image.shape)
             output_image = run(sess, image)
             save_dir = os.path.join(args.output_dir, name)
-            image = cv2.resize(image, (0,0), fx=1/down_scale, fy=1/down_scale)
-            output_image = cv2.resize(output_image, (0,0), fx=1/down_scale, fy=1/down_scale)
+            
+            if args.restore_size:
+                image = cv2.resize(image, (0,0), fx=1/down_scale, fy=1/down_scale)
+                output_image = cv2.resize(output_image, (0,0), fx=1/down_scale, fy=1/down_scale)
             save_output(image, output_image, save_dir)
             print('Running time:', time()-start, 'image:', image.shape)
 
