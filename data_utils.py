@@ -23,6 +23,7 @@ args = parser.parse_args()
 
 def psd_combine(path,save_path=None, input_idx=2, line_idx=1, dot_idx=0):
     psd = PSDImage.load(path)
+    print(path)
     assert len(psd.layers) == 3, 'num of len should be 3 but found {}'.format(len(psd.layers)) + path
 
     input =psd2gray(psd, input_idx, input_layer=True)
@@ -45,20 +46,16 @@ def psd2gray(psd, layer_idx, input_layer=False):
     
     '''    
     mask = np.zeros([psd.header.height, psd.header.width], dtype='uint8') if not input_layer else np.zeros([psd.header.height, psd.header.width, 3], dtype='uint8')
-    # try:
     layer = np.array(psd.layers[layer_idx].as_PIL())
     print(layer.shape)
     if args.psd_type == 'raw':
-        print('raw')
-        img = layer[..., -1] if not input_layer else  cv2.cvtColor(layer, cv2.COLOR_BGRA2BGR)
+        img = layer[..., 0] if not input_layer else  cv2.cvtColor(layer, cv2.COLOR_BGRA2BGR)
     else:
         img = cv2.cvtColor(layer, cv2.COLOR_BGRA2GRAY) if not input_layer else  cv2.cvtColor(layer, cv2.COLOR_BGRA2BGR)
 
     x1, y1, x2, y2 = [i for i in psd.layers[layer_idx].bbox]
     mask[y1:y2, x1:x2] = img
-    # except:
     
-    #print('EXception')
         
     return mask
 
