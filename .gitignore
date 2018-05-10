@@ -1,0 +1,12 @@
+data/
+script
+output
+.ipynb_checkpoints*
+test
+test
+pts
+notebooks/Untitled.ipynb
+test_bpr 
+test_out
+dic_raw_input_to_refine 
+dic_raw_output

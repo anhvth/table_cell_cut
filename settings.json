@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": "/Users/macos/miniconda3/bin/python",
+    "python.linting.enabled": false,
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "window.zoomLevel": 0,
+    "git.confirmSync": false
+}
