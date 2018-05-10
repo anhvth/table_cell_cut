@@ -18,4 +18,9 @@ data
 oo
 showlownet_muti_head.py
 frozen_model/
+<<<<<<< HEAD
 >>>>>>> c6b138c63fa04195ee42831d446bca4af7987bcd
+=======
+multi_head.py
+oo2
+>>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
