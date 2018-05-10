@@ -10,10 +10,22 @@ test_bpr
 test_out
 dic_raw_input_to_refine 
 dic_raw_output
+<<<<<<< HEAD
+frozen_model
+ooooo/
+=======
 data
 oo
 showlownet_muti_head.py
 frozen_model/
+<<<<<<< HEAD
+>>>>>>> c6b138c63fa04195ee42831d446bca4af7987bcd
+=======
 multi_head.py
 oo2
+<<<<<<< HEAD
 bash script/commit
+=======
+>>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
+>>>>>>> b30ea33b0bc9dd1b0402cf2da45428467653851b
+.gitignore

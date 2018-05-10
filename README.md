@@ -43,7 +43,10 @@ CUDA_VISIBLE_DEVICES=-1 python shalowunet.py \
     --crop_size 512
 ```
 #### 4.2 Run course network
-```
+Frozen model:
+https://drive.google.com/open?id=1-9r7mqMxoFSUDMw2RpKJEZN0gbTnpYFZ
+
+```sh
 python run_frozen_model.py  \
     --input_dir data/dic/raw/  \
     --output_dir test \
