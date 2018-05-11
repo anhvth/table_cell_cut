@@ -13,13 +13,14 @@ big combined images to create training set
 ```sh
 python data_utils.py \
     --mode crop \
-    --input_dir data/bpr/origin_combine \
+    --input_dir data/dic/origin_combine \
     --output_dir data/dic/crop \
     --crop_size 512
 ```
 ---> The output now is at data/dict/crop/512    
 
 ### 3 Train coarse network
+
 ```sh 
 python shalowunet.py \
     --mode train \
@@ -35,7 +36,6 @@ python shalowunet.py \
 ### 4 Test coarse network
 #### 4.1 Export coarse network
 ```sh 
-
 CUDA_VISIBLE_DEVICES=-1 python shalowunet.py \
     --mode export \
     --output_dir output/shalowunet/dic/frozen \
@@ -73,8 +73,6 @@ python refine/deepunet_refine.py \
 ```sh
 python refine/run_refine.py --input_dir test/ --checkpoint output/refine/dic/1/
 ```
-
-
 
 ### RM GIT
 -- Remove the history from 

@@ -378,6 +378,9 @@ def create_model(inputs, targets):
     )
 
 
+def get_generator(paths):
+    pass
+
 def save_images(fetches, step=None):
     image_dir = os.path.join(a.output_dir, "images")
     if not os.path.exists(image_dir):
@@ -526,14 +529,14 @@ def main():
 
         return
     #examples = load_examples()
-    print("examples count = %d" % examples.count)
-
-    model = create_model(examples.inputs, examples.targets)
-
+    # print("examples count = %d" % examples.count)
 
     inputs = tf.placeholder(tf.float32, [a.batch_size, a.crop_size, a.crop_size, 3], name='inputs')#deprocess(examples.inputs)
-    targets = tf.placeholder(tf.float32, [a.batch_size, a.crop_size, a.crop_size, 3], name='targets')#deprocess(examples.targets)
+    targets = tf.placeholder(tf.float32, [a.batch_size, a.crop_size, a.crop_size, 1], name='targets')#deprocess(examples.targets)
+    model = create_model(inputs, targets)
+
     outputs = deprocess(model.outputs)
+
 
     def convert(image):
         if a.aspect_ratio != 1.0:
@@ -551,13 +554,13 @@ def main():
     with tf.name_scope("convert_outputs"):
         converted_outputs = convert(outputs)
 
-    with tf.name_scope("encode_images"):
-        display_fetches = {
-            "paths": examples.paths,
-            "inputs": tf.map_fn(tf.image.encode_png, converted_inputs, dtype=tf.string, name="input_pngs"),
-            "targets": tf.map_fn(tf.image.encode_png, converted_targets, dtype=tf.string, name="target_pngs"),
-            "outputs": tf.map_fn(tf.image.encode_png, converted_outputs, dtype=tf.string, name="output_pngs"),
-        }
+    # with tf.name_scope("encode_images"):
+    #     display_fetches = {
+    #         "paths": examples.paths,
+    #         "inputs": tf.map_fn(tf.image.encode_png, converted_inputs, dtype=tf.string, name="input_pngs"),
+    #         "targets": tf.map_fn(tf.image.encode_png, converted_targets, dtype=tf.string, name="target_pngs"),
+    #         "outputs": tf.map_fn(tf.image.encode_png, converted_outputs, dtype=tf.string, name="output_pngs"),
+    #     }
 
     # summaries
     with tf.name_scope("inputs_summary"):
@@ -638,7 +641,8 @@ def main():
 
                 if should(a.display_freq):
                     fetches["display"] = display_fetches
-                feed_dict = {inputs: np.random.randn(inputs.get_shape().as_list()), targets:inputs.get_shape().as_list()}
+                batch_inputs, batch_target = next(generator)
+                feed_dict = {inputs: batch_inputs, targets: batch_targets)}
                 results = sess.run(fetches, options=options, run_metadata=run_metadata, feed_dict=feed_dict)
 
                 if should(a.summary_freq):
@@ -656,11 +660,11 @@ def main():
 
                 if should(a.progress_freq):
                     # global_step will have the correct step count if we resume from a checkpoint
-                    train_epoch = math.ceil(results["global_step"] / examples.steps_per_epoch)
-                    train_step = (results["global_step"] - 1) % examples.steps_per_epoch + 1
+                    # train_epoch = math.ceil(results["global_step"] / examples.steps_per_epoch)
+                    # train_step = (results["global_step"] - 1) % examples.steps_per_epoch + 1
                     rate = (step + 1) * a.batch_size / (time.time() - start)
                     remaining = (max_steps - step) * a.batch_size / rate
-                    print("progress  epoch %d  step %d  image/sec %0.1f  remaining %dm" % (train_epoch, train_step, rate, remaining / 60))
+                    print("progress  global_step %d    image/sec %0.1f  remaining %dm" % (results["global_step"], rate, remaining / 60))
                     print("gen_loss_L1", results["gen_loss_L1"])
 
                 if should(a.save_freq):
