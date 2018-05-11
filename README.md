@@ -2,10 +2,13 @@
 ### 1.Combine photoshop 
 File to create origin training set, a psd file is expected to have three layers, [dot, line, input]
 ```sh
+for f in data/*
+do
 python data_utils.py  \
     --mode combine \
-    --input_dir data/bpr/psd \
-    --output_dir data/bpr/origin_combine
+    --input_dir $f/psd \
+    --output_dir $f/origin_combine;
+done
 ```
 ### 2. Random crop 
 big combined images to create training set
