@@ -56,7 +56,7 @@ def psd2gray(psd, layer_idx, input_layer=False):
     print(layer.shape)
     if args.psd_type == 'raw':
         img = layer[..., -
-            1] if not input_layer else cv2.cvtColor(layer, cv2.COLOR_BGRA2BGR)
+                    1] if not input_layer else cv2.cvtColor(layer, cv2.COLOR_BGRA2BGR)
     else:
         img = cv2.cvtColor(layer, cv2.COLOR_BGRA2GRAY) if not input_layer else cv2.cvtColor(
             layer, cv2.COLOR_BGRA2BGR)
@@ -124,8 +124,9 @@ if __name__ == '__main__':
     ext = '*.psd' if args.mode == 'combine' else '*.png'
     rg_paths = os.path.join(args.input_dir, ext)
     print('Glob({})'.format(rg_paths))
-    paths = glob(rg_paths)
+    
     if args.mode == 'combine':
+        paths = glob(rg_paths)
         print('Num of sample:', len(paths))
         save_dir = args.output_dir
         save_dir_a = os.path.join(save_dir, 'A')
@@ -134,36 +135,38 @@ if __name__ == '__main__':
         os.makedirs(save_dir_b, exist_ok=True)
         for path in paths:
             try:
-                name=os.path.split(path)[-1].split('.')[0]
-
-
-                save_path_a=os.path.join(save_dir_a, name+'.png')
-                save_path_b=os.path.join(save_dir_b, name+'.png')
-                psd_combine(path, save_path_a,save_path_b)
+                name = os.path.split(path)[-1].split('.')[0]
+                save_path_a = os.path.join(save_dir_a, name+'.png')
+                save_path_b = os.path.join(save_dir_b, name+'.png')
+                psd_combine(path, save_path_a, save_path_b)
             except RuntimeError:
                 print('ERROR: {}'.format(path), RuntimeError)
     elif args.mode == 'crop':
-        down_scale_mean=1
-        i=0
-        save_dir=os.path.join(args.output_dir, str(args.crop_size))
-        save_dir_a=os.path.join(save_dir, 'A')
-        save_dir_b=os.path.join(save_dir, 'B')
+        paths_A = glob(os.path.join(args.input_dir, 'A','*.png'))
+        paths_B = glob(os.path.join(args.input_dir, 'B','*.png'))
+        down_scale_mean = 1
+        i = 0
+        save_dir = os.path.join(args.output_dir, str(args.crop_size))
+        save_dir_a = os.path.join(save_dir, 'A')
+        save_dir_b = os.path.join(save_dir, 'B')
         os.makedirs(save_dir_a, exist_ok=True)
         os.makedirs(save_dir_b, exist_ok=True)
-        for path in tqdm(paths):
-            name=os.path.split(path)[-1].split('.')[0]
-            bigimg=load_image(path)
+        for pa, pb in tqdm(zip(paths_A, paths_B)):
+            name = os.path.split(pa)[-1].split('.')[0]
             for _ in range(30):
-                down_scale=(np.random.uniform(-.5, .5)+1)*down_scale_mean
-                resized=cv2.resize(
-                    bigimg, (0, 0), fx=down_scale, fy=down_scale)
-                a, b=split(resized)
+                down_scale = (np.random.uniform(-.5, .5)+1)*down_scale_mean
+                a, b = load_image(pa), load_image(pb)
+                def resize(img):
+                    return  cv2.resize(
+                        img, (0, 0), fx=down_scale, fy=down_scale)
+                a,b = resize(a),  resize(b)
                 for _ in range(5):
-                    sample_a, sample_b=random_crop(a, b, args.crop_size)
-                    output_path_a=os.path.join(
+                    sample_a, sample_b = random_crop(a, b, args.crop_size)
+                    output_path_a = os.path.join(
                         save_dir_a, '{}_{}.png'.format(name, i))
-                    output_path_b=os.path.join(
+                    output_path_b = os.path.join(
                         save_dir_b, '{}_{}.png'.format(name, i))
                     write_image(output_path_a, sample_a)
                     write_image(output_path_b, sample_b)
                     i += 1
+        
