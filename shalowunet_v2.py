@@ -434,7 +434,10 @@ def get_generator():
         return rgb/127.5 - 1
     
     from glob import glob
-    paths_a = glob(os.path.join(a.input_dir, 'A', '*.png'))
+    stra = os.path.join(a.input_dir, 'A', '*.png')
+    
+    paths_a = glob(stra)
+    print('Num of example:', len(paths_a))
     paths_b = glob(os.path.join(a.input_dir, 'B', '*.png'))
     paths_a = sorted(paths_a)
     paths_b = sorted(paths_b)
@@ -446,7 +449,6 @@ def get_generator():
             imgA[0,:,:,:] = read(paths_a[i]) 
             imgB[0,:,:,:] = read(paths_b[i]) 
         yield imgA, imgB
-
             
 def main():
     if a.seed is None:
