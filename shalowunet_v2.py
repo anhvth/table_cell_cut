@@ -12,6 +12,7 @@ import random
 import collections
 import math
 import time
+import cv2
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_dir", default='data/croped_image640', help="path to folder containing images")
@@ -378,8 +379,7 @@ def create_model(inputs, targets):
     )
 
 
-def get_generator(paths):
-    pass
+
 
 def save_images(fetches, step=None):
     image_dir = os.path.join(a.output_dir, "images")
@@ -427,7 +427,27 @@ def append_index(filesets, step=False):
         index.write("</tr>")
     return index_path
 
+def get_generator():
+    def read(path):
+        img = cv2.imread(path)
+        rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        return rgb/127.5 - 1
+    
+    from glob import glob
+    paths_a = glob(os.path.join(a.input_dir, 'A', '*.png'))
+    paths_b = glob(os.path.join(a.input_dir, 'B', '*.png'))
+    paths_a = sorted(paths_a)
+    paths_b = sorted(paths_b)
+    while True:
+        idxs = np.random.choice(len(paths_a), a.batch_size, replace=False)
+        imgA = np.zeros([a.batch_size, a.crop_size, a.crop_size, 3])
+        imgB = np.zeros([a.batch_size, a.crop_size, a.crop_size, 3])
+        for i in idxs:
+            imgA[0,:,:,:] = read(paths_a[i]) 
+            imgB[0,:,:,:] = read(paths_b[i]) 
+        yield imgA, imgB
 
+            
 def main():
     if a.seed is None:
         a.seed = random.randint(0, 2**31 - 1)
@@ -532,7 +552,7 @@ def main():
     # print("examples count = %d" % examples.count)
 
     inputs = tf.placeholder(tf.float32, [a.batch_size, a.crop_size, a.crop_size, 3], name='inputs')#deprocess(examples.inputs)
-    targets = tf.placeholder(tf.float32, [a.batch_size, a.crop_size, a.crop_size, 1], name='targets')#deprocess(examples.targets)
+    targets = tf.placeholder(tf.float32, [a.batch_size, a.crop_size, a.crop_size, 3], name='targets')#deprocess(examples.targets)
     model = create_model(inputs, targets)
 
     outputs = deprocess(model.outputs)
@@ -616,7 +636,7 @@ def main():
         else:
             # training
             start = time.time()
-
+            g = get_generator()
             for step in range(max_steps):
                 def should(freq):
                     return freq > 0 and ((step + 1) % freq == 0 or step == max_steps - 1)
@@ -641,8 +661,8 @@ def main():
 
                 if should(a.display_freq):
                     fetches["display"] = display_fetches
-                batch_inputs, batch_target = next(generator)
-                feed_dict = {inputs: batch_inputs, targets: batch_targets)}
+                batch_inputs, batch_targets = next(g)
+                feed_dict = {inputs: batch_inputs, targets: batch_targets}
                 results = sess.run(fetches, options=options, run_metadata=run_metadata, feed_dict=feed_dict)
 
                 if should(a.summary_freq):
