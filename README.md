@@ -41,8 +41,8 @@ python shalowunet.py \
 ```sh 
 CUDA_VISIBLE_DEVICES=-1 python shalowunet.py \
     --mode export \
-    --output_dir output/shalowunet/dic/frozen \
-    --checkpoint output/shalowunet/dic/ \
+    --output_dir output/frozen \
+    --checkpoint output/ \
     --crop_size 512
 ```
 #### 4.2 Run course network
@@ -53,7 +53,7 @@ https://drive.google.com/open?id=1-9r7mqMxoFSUDMw2RpKJEZN0gbTnpYFZ
 python run_frozen_model.py  \
     --input_dir data/dic/raw/  \
     --output_dir test \
-    --checkpoint output/shalowunet/dic/frozen/ \
+    --checkpoint output/frozen/ \
     --ext tif \
     --mode join
 ```

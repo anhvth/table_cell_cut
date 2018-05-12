@@ -445,9 +445,9 @@ def get_generator():
         idxs = np.random.choice(len(paths_a), a.batch_size, replace=False)
         imgA = np.zeros([a.batch_size, a.crop_size, a.crop_size, 3])
         imgB = np.zeros([a.batch_size, a.crop_size, a.crop_size, 3])
-        for i in idxs:
-            imgA[0,:,:,:] = read(paths_a[i]) 
-            imgB[0,:,:,:] = read(paths_b[i]) 
+        for _,i in enumerate(idxs):
+            imgA[_,:,:,:] = read(paths_a[i]) 
+            imgB[_,:,:,:] = read(paths_b[i]) 
         yield imgA, imgB
             
 def main():
