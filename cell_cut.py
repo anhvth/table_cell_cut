@@ -39,10 +39,6 @@ def write_image(path, image):
 
 
 def show(x, method='pil'):
-<<<<<<< HEAD
-    
-=======
->>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
     if method == 'pil':
         img = Image.fromarray(x)
         img.show()
@@ -77,7 +73,6 @@ def auto_canny(image, sigma=0.33):
 
 
 def sort_contours(cnts, method="left-to-right"):
-<<<<<<< HEAD
     # initialize the reverse flag and sort index
     reverse = False
     i = 0
@@ -93,25 +88,11 @@ def sort_contours(cnts, method="left-to-right"):
 
     # construct the list of bounding boxes and sort them from top to
     # bottom
-=======
-    reverse = False
-    i = 0
-
-    if method == "right-to-left" or method == "bottom-to-top":
-        reverse = True
-
-    if method == "top-to-bottom" or method == "bottom-to-top":
-        i = 1
-        
->>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
     boundingBoxes = [cv2.boundingRect(c) for c in cnts]
     (cnts, boundingBoxes) = zip(*sorted(zip(cnts, boundingBoxes),
                                         key=lambda b: b[1][i], reverse=reverse))
 
-<<<<<<< HEAD
     # return the list of sorted contours and bounding boxes
-=======
->>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
     return (cnts, boundingBoxes)
 
 
@@ -190,28 +171,17 @@ def cell_cut():
     edges = auto_canny(thresh)
     cnts = get_contour(edges)
     i = 0
-<<<<<<< HEAD
     # mask = np.zeros([*thresh.shape, 3], dtype="uint8")  # img_inp.copy()
     mask = img_inp.copy()
     for coords in cnts:
         # shape = sd.detect(coords)
-=======
-    mask = img_inp.copy()
-    for coords in cnts:
->>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
         x,y,w,h = cv2.boundingRect(coords)
         is_convex = cv2.isContourConvex(coords)
         rect = cv2.minAreaRect(coords)
         angle = rect[-1]
         if angle < -45:
             angle = -(90 + angle)
-<<<<<<< HEAD
         area = cv2.contourArea(coords)
-=======
-            
-        area = cv2.contourArea(coords)
-        
->>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
         if   h < 100 or True:
             rect = cv2.minAreaRect(coords)
             box = cv2.boxPoints(rect)
@@ -219,7 +189,6 @@ def cell_cut():
             color = (255,0,0) if i % 2 == 0 else (0,255,255)
             cv2.drawContours(mask,[box],0,color,1)
             cX, cY = box.mean(axis=0).astype('int')
-<<<<<<< HEAD
             # cv2.putText(mask, "#{}".format(i), (int(cX), int(cY)), cv2.FONT_HERSHEY_SIMPLEX, .5, (255, 0, 255), 1)
 
     return mask
@@ -228,26 +197,12 @@ def cell_cut():
 if __name__ == '__main__':
     mask = cell_cut()
     #resize_output = cv2.resize(mask, (0, 0), fx=args.resize_ratio, fy=args.resize_ratio)
-=======
-
-    return mask
-
-if __name__ == '__main__':
-    mask = cell_cut()
->>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
     resize_output = cv2.resize(mask, (0, 0), fx=.2, fy=.2)
     if os.path.isdir(args.input_dir):
         output_cell_cut = os.path.join(args.output_dir, 'cellcut_output.png')
     else:
         output_cell_cut = os.path.join(args.output_dir, '{}_cellcut_output.png'.format(os.path.split(args.input_dir)[-1]))
-<<<<<<< HEAD
     print('Cell cut output: ', output_cell_cut)
     os.makedirs(os.path.split(output_cell_cut)[0], exist_ok=True)
     cv2.imwrite(output_cell_cut, mask)
     #os.system('open {}'.format(output_cell_cut))
-=======
-    
-    print('Cell cut output: ', output_cell_cut)
-    os.makedirs(os.path.split(output_cell_cut)[0], exist_ok=True)
-    cv2.imwrite(output_cell_cut, mask)
->>>>>>> c4102be08e8a4d5d873699ee700313401db0b397
