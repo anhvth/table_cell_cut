@@ -30,7 +30,7 @@ def load_image(path, down_scale, verbal=False):
     image = cv2.imread(path)
     image = cv2.resize(image, (0,0), fx=down_scale, fy=down_scale)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    return image
+    return image#[:,:image.shape[1]//2]
 
 def write(path, image):
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
